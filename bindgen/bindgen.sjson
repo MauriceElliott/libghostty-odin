@@ -1,0 +1,59 @@
+// Bindgen configuration for generating ghostty_vt_c Odin bindings from vt.h.
+//
+// Prerequisites: run scripts/build_libghostty.sh first so that
+// build/ghostty-install/include/ghostty/vt.h exists.
+//
+// Paths are relative to this directory (bindgen/).
+
+inputs = [
+    "../build/ghostty-install/include/ghostty/vt"
+]
+
+// NOTE: this path is relative to the working directory when bindgen is run (repo root),
+// NOT relative to this file. The script ensures cwd is always the repo root.
+clang_include_paths = [
+    "build/ghostty-install/include"
+]
+
+output_folder = "../src/ghostty_vt_c"
+
+package_name = "ghostty_vt_c"
+
+// Strip the "Ghostty" prefix from all type names (GhosttyTerminal → Terminal, etc.)
+remove_type_prefix = "Ghostty"
+
+// Strip the "ghostty_" prefix from all function names and use it as link_prefix
+remove_function_prefix = "ghostty_"
+
+// Platform-specific foreign import declarations written by hand.
+imports_file = "imports.odin"
+
+procedures_at_end = true
+
+// Opaque handle typedefs (pointer-to-incomplete-struct) map naturally to rawptr in Odin.
+// The generator may already do this, but be explicit for the most-used ones.
+type_overrides = {
+    "GhosttyTerminal"                          = "Terminal_Handle"
+    "GhosttyRenderState"                       = "Render_State_Handle"
+    "GhosttyRenderStateRowIterator"            = "Row_Iterator_Handle"
+    "GhosttyRenderStateRowCells"               = "Row_Cells_Handle"
+    "GhosttyKittyGraphics"                     = "Kitty_Graphics_Handle"
+    "GhosttyKittyGraphicsImage"                = "Kitty_Graphics_Image_Handle"
+    "GhosttyKittyGraphicsPlacementIterator"    = "Kitty_Graphics_Placement_Iterator_Handle"
+    "GhosttyFormatter"                         = "Formatter_Handle"
+    "GhosttyOscParser"                         = "Osc_Parser_Handle"
+    "GhosttyOscCommand"                        = "Osc_Command_Handle"
+    "GhosttySgrParser"                         = "Sgr_Parser_Handle"
+}
+
+// device.h and point.h use GHOSTTY_ENUM_MAX_VALUE without including types.h.
+// Provide it directly so standalone parsing of those files produces INT_MAX.
+clang_defines = {
+    "GHOSTTY_ENUM_MAX_VALUE" = "2147483647"
+}
+
+// Terminal_Options has 4 bytes of implicit C padding between `rows` (u16 at offset 2)
+// and `max_scrollback` (size_t at offset 8). Force alignment to catch layout errors.
+struct_align = {
+    "GhosttyTerminalOptions" = 8
+}
