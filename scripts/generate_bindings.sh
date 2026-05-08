@@ -16,4 +16,23 @@ fi
 rm -rf "$REPO_ROOT/src/ghostty_vt_c"
 
 cd "$REPO_ROOT"
-"$TOOL_BIN" "$REPO_ROOT/bindgen"
+
+BINDGEN_DIR="$REPO_ROOT/bindgen"
+TEMP_CONFIG="$BINDGEN_DIR/bindgen_macos_temp.sjson"
+
+# libclang (Homebrew LLVM) can't auto-locate its own resource directory when run
+# via symlinked paths, so stdbool.h / stdint.h / stddef.h / limits.h are not found.
+# Resolve the resource dir explicitly from the same clang that libclang belongs to.
+CLANG_RESOURCE_INCLUDE="$($(brew --prefix llvm)/bin/clang -print-resource-dir)/include"
+
+python3 -c "
+import pathlib
+content = pathlib.Path('$BINDGEN_DIR/bindgen.sjson').read_text()
+patched = content.replace(
+    '\"build/ghostty-install/include\"',
+    '\"build/ghostty-install/include\",\n    \"$CLANG_RESOURCE_INCLUDE\"'
+)
+pathlib.Path('$TEMP_CONFIG').write_text(patched)
+"
+trap 'rm -f "$TEMP_CONFIG"' EXIT
+"$TOOL_BIN" "$TEMP_CONFIG"
