@@ -3,18 +3,11 @@
 Odin bindings for `libghostty-vt`, the virtual terminal library extracted from [Ghostty](https://ghostty.org).
 
 ## Status
-
-This repository is currently in the design and planning stage.
-
-The immediate goal is to build this in a way that:
-
-- keeps the raw C surface available,
-- adds a thin, idiomatic Odin wrapper on top,
+Using [odin-c-bindings](https://github.com/karl-zylinski/odin-c-bindgen) by the wonderful Karl Zylenski I have now created a script that will generate the C FFI bindings based api output by libghostty-vt.
 
 ## Planned shape
 
 - `ghostty_vt_c` — raw FFI bindings to `ghostty/vt.h`
 - `ghostty_vt` — Odin-friendly wrapper API
-- `example/ghostling_odin` — minimal terminal example, similar in spirit to `ghostling_rs`
+- `example/ghostling` — minimal terminal example based on  [ghostling](https://github.com/ghostty-org/ghostling)
 
-The working design and implementation plan lives in [`PLAN.md`](./PLAN.md).
