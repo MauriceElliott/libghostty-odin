@@ -7,14 +7,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -22,6 +14,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -65,7 +59,6 @@ CellContentTag :: enum u32 {
 
 	/** No text; background color as RGB. */
 	BG_COLOR_RGB       = 3,
-	TAG_MAX_VALUE      = 2147483647,
 }
 
 /**
@@ -87,7 +80,6 @@ CellWide :: enum u32 {
 
 	/** Spacer at end of soft-wrapped line for a wide character. */
 	SPACER_HEAD = 3,
-	MAX_VALUE   = 2147483647,
 }
 
 /**
@@ -100,14 +92,13 @@ CellWide :: enum u32 {
 */
 CellSemanticContent :: enum u32 {
 	/** Regular output content, such as command output. */
-	OUTPUT    = 0,
+	OUTPUT = 0,
 
 	/** Content that is part of user input. */
-	INPUT     = 1,
+	INPUT  = 1,
 
 	/** Content that is part of a shell prompt. */
-	PROMPT    = 2,
-	MAX_VALUE = 2147483647,
+	PROMPT = 2,
 }
 
 /**
@@ -200,7 +191,6 @@ CellData :: enum u32 {
 	* Output type: GhosttyColorRgb *
 	*/
 	COLOR_RGB        = 11,
-	MAX_VALUE        = 2147483647,
 }
 
 /**
@@ -220,7 +210,6 @@ RowSemanticPrompt :: enum u32 {
 
 	/** Prompt cells exist and this is a continuation line. */
 	PROMPT_CONTINUATION = 2,
-	MAX_VALUE           = 2147483647,
 }
 
 /**
@@ -290,7 +279,6 @@ RowData :: enum u32 {
 	* Output type: bool *
 	*/
 	DIRTY                     = 8,
-	MAX_VALUE                 = 2147483647,
 }
 
 @(default_calling_convention="c", link_prefix="ghostty_")

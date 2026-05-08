@@ -1,10 +1,3 @@
-/**
- * @file mouse.h
- *
- * Mouse encoding module - encode mouse events into terminal escape sequences.
- */
-package ghostty_vt_c
-
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -14,5 +7,3 @@ when ODIN_OS == .Linux {
 }
 // Suppress "lib declared but not used" in generated files that only contain types.
 _ :: lib
-
-

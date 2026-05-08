@@ -7,14 +7,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -22,6 +14,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -64,7 +58,6 @@ SgrAttributeTag :: enum u32 {
 	BRIGHT_FG_8           = 28,
 	BG_256                = 29,
 	FG_256                = 30,
-	MAX_VALUE             = 2147483647,
 }
 
 /**
@@ -73,13 +66,12 @@ SgrAttributeTag :: enum u32 {
 * @ingroup sgr
 */
 SgrUnderline :: enum u32 {
-	NONE      = 0,
-	SINGLE    = 1,
-	DOUBLE    = 2,
-	CURLY     = 3,
-	DOTTED    = 4,
-	DASHED    = 5,
-	MAX_VALUE = 2147483647,
+	NONE   = 0,
+	SINGLE = 1,
+	DOUBLE = 2,
+	CURLY  = 3,
+	DOTTED = 4,
+	DASHED = 5,
 }
 
 /**

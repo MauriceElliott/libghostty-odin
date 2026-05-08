@@ -7,14 +7,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -22,6 +14,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -47,14 +41,13 @@ TerminalOptions :: struct #align(8) {
 */
 TerminalScrollViewportTag :: enum u32 {
 	/** Scroll to the top of the scrollback. */
-	TOP       = 0,
+	TOP    = 0,
 
 	/** Scroll to the bottom (active area). */
-	BOTTOM    = 1,
+	BOTTOM = 1,
 
 	/** Scroll by a delta amount (up is negative). */
-	DELTA     = 2,
-	MAX_VALUE = 2147483647,
+	DELTA  = 2,
 }
 
 /**
@@ -93,7 +86,6 @@ TerminalScreen :: enum u32 {
 
 	/** The alternate screen. */
 	ALTERNATE = 1,
-	MAX_VALUE = 2147483647,
 }
 
 /**
@@ -444,7 +436,6 @@ TerminalOption :: enum u32 {
 	* Input type: size_t*
 	*/
 	APC_MAX_BYTES_KITTY           = 20,
-	MAX_VALUE                     = 2147483647,
 }
 
 /**
@@ -720,7 +711,6 @@ TerminalData :: enum u32 {
 	* Output type: GhosttyKittyGraphics *
 	*/
 	KITTY_GRAPHICS                = 30,
-	MAX_VALUE                     = 2147483647,
 }
 
 @(default_calling_convention="c", link_prefix="ghostty_")

@@ -7,14 +7,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -22,6 +14,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -31,17 +25,16 @@ when ODIN_OS == .Linux {
 */
 SizeReportStyle :: enum u32 {
 	/** In-band size report (mode 2048): ESC [ 48 ; rows ; cols ; height ; width t */
-	MODE_2048       = 0,
+	MODE_2048 = 0,
 
 	/** XTWINOPS text area size in pixels: ESC [ 4 ; height ; width t */
-	CSI_14_T        = 1,
+	CSI_14_T  = 1,
 
 	/** XTWINOPS cell size in pixels: ESC [ 6 ; height ; width t */
-	CSI_16_T        = 2,
+	CSI_16_T  = 2,
 
 	/** XTWINOPS text area size in characters: ESC [ 8 ; rows ; cols t */
-	CSI_18_T        = 3,
-	STYLE_MAX_VALUE = 2147483647,
+	CSI_18_T  = 3,
 }
 
 /**

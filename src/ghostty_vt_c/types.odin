@@ -7,14 +7,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -22,6 +14,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -29,20 +23,19 @@ when ODIN_OS == .Linux {
 */
 Result :: enum i32 {
 	/** Operation completed successfully */
-	SUCCESS          = 0,
+	SUCCESS       = 0,
 
 	/** Operation failed due to failed allocation */
-	OUT_OF_MEMORY    = -1,
+	OUT_OF_MEMORY = -1,
 
 	/** Operation failed due to invalid value */
-	INVALID_VALUE    = -2,
+	INVALID_VALUE = -2,
 
 	/** Operation failed because the provided buffer was too small */
-	OUT_OF_SPACE     = -3,
+	OUT_OF_SPACE  = -3,
 
 	/** The requested value has no value */
-	NO_VALUE         = -4,
-	RESULT_MAX_VALUE = 2147483647,
+	NO_VALUE      = -4,
 }
 
 TerminalImpl :: struct {}
@@ -52,7 +45,7 @@ TerminalImpl :: struct {}
 *
 * @ingroup terminal
 */
-Terminal          :: Terminal_Handle
+Terminal          :: ^TerminalImpl
 KittyGraphicsImpl :: struct {}
 
 /**
@@ -65,7 +58,7 @@ KittyGraphicsImpl :: struct {}
 *
 * @ingroup kitty_graphics
 */
-KittyGraphics          :: Kitty_Graphics_Handle
+KittyGraphics          :: ^KittyGraphicsImpl
 KittyGraphicsImageImpl :: struct {}
 
 /**
@@ -77,7 +70,7 @@ KittyGraphicsImageImpl :: struct {}
 *
 * @ingroup kitty_graphics
 */
-KittyGraphicsImage                 :: Kitty_Graphics_Image_Handle
+KittyGraphicsImage                 :: ^KittyGraphicsImageImpl
 KittyGraphicsPlacementIteratorImpl :: struct {}
 
 /**
@@ -85,7 +78,7 @@ KittyGraphicsPlacementIteratorImpl :: struct {}
 *
 * @ingroup kitty_graphics
 */
-KittyGraphicsPlacementIterator :: Kitty_Graphics_Placement_Iterator_Handle
+KittyGraphicsPlacementIterator :: ^KittyGraphicsPlacementIteratorImpl
 RenderStateImpl                :: struct {}
 
 /**
@@ -93,7 +86,7 @@ RenderStateImpl                :: struct {}
 *
 * @ingroup render
 */
-RenderState                :: Render_State_Handle
+RenderState                :: ^RenderStateImpl
 RenderStateRowIteratorImpl :: struct {}
 
 /**
@@ -101,7 +94,7 @@ RenderStateRowIteratorImpl :: struct {}
 *
 * @ingroup render
 */
-RenderStateRowIterator  :: Row_Iterator_Handle
+RenderStateRowIterator  :: ^RenderStateRowIteratorImpl
 RenderStateRowCellsImpl :: struct {}
 
 /**
@@ -109,7 +102,7 @@ RenderStateRowCellsImpl :: struct {}
 *
 * @ingroup render
 */
-RenderStateRowCells :: Row_Cells_Handle
+RenderStateRowCells :: ^RenderStateRowCellsImpl
 SgrParserImpl       :: struct {}
 
 /**
@@ -120,7 +113,7 @@ SgrParserImpl       :: struct {}
 *
 * @ingroup sgr
 */
-SgrParser     :: Sgr_Parser_Handle
+SgrParser     :: ^SgrParserImpl
 FormatterImpl :: struct {}
 
 /**
@@ -128,7 +121,7 @@ FormatterImpl :: struct {}
 *
 * @ingroup formatter
 */
-Formatter     :: Formatter_Handle
+Formatter     :: ^FormatterImpl
 OscParserImpl :: struct {}
 
 /**
@@ -139,7 +132,7 @@ OscParserImpl :: struct {}
 *
 * @ingroup osc
 */
-OscParser      :: Osc_Parser_Handle
+OscParser      :: ^OscParserImpl
 OscCommandImpl :: struct {}
 
 /**
@@ -150,7 +143,7 @@ OscCommandImpl :: struct {}
 *
 * @ingroup osc
 */
-OscCommand :: Osc_Command_Handle
+OscCommand :: ^OscCommandImpl
 
 /**
 * A borrowed byte string (pointer + length).

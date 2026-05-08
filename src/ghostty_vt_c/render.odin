@@ -7,14 +7,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -22,6 +14,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -31,14 +25,13 @@ when ODIN_OS == .Linux {
 */
 RenderStateDirty :: enum u32 {
 	/** Not dirty at all; rendering can be skipped. */
-	FALSE     = 0,
+	FALSE   = 0,
 
 	/** Some rows changed; renderer can redraw incrementally. */
-	PARTIAL   = 1,
+	PARTIAL = 1,
 
 	/** Global state changed; renderer should redraw everything. */
-	FULL      = 2,
-	MAX_VALUE = 2147483647,
+	FULL    = 2,
 }
 
 /**
@@ -58,7 +51,6 @@ RenderStateCursorVisualStyle :: enum u32 {
 
 	/** Hollow block cursor. */
 	BLOCK_HOLLOW = 3,
-	MAX_VALUE    = 2147483647,
 }
 
 /**
@@ -130,7 +122,6 @@ RenderStateData :: enum u32 {
 	/** Whether the cursor is on the tail of a wide character (bool).
 	*  Only valid when CURSOR_VIEWPORT_HAS_VALUE is true. */
 	CURSOR_VIEWPORT_WIDE_TAIL = 17,
-	MAX_VALUE                 = 2147483647,
 }
 
 /**
@@ -140,8 +131,7 @@ RenderStateData :: enum u32 {
 */
 RenderStateOption :: enum u32 {
 	/** Set dirty state (GhosttyRenderStateDirty). */
-	DIRTY     = 0,
-	MAX_VALUE = 2147483647,
+	GHOSTTY_RENDER_STATE_OPTION_DIRTY = 0,
 }
 
 /**
@@ -151,20 +141,19 @@ RenderStateOption :: enum u32 {
 */
 RenderStateRowData :: enum u32 {
 	/** Invalid / sentinel value. */
-	INVALID   = 0,
+	INVALID = 0,
 
 	/** Whether the current row is dirty (bool). */
-	DIRTY     = 1,
+	DIRTY   = 1,
 
 	/** The raw row value (GhosttyRow). */
-	RAW       = 2,
+	RAW     = 2,
 
 	/** Populate a pre-allocated GhosttyRenderStateRowCells with cell data for
 	*  the current row (GhosttyRenderStateRowCells). Cell data is only
 	*  valid as long as the underlying render state is not updated.
 	*  It is unsafe to use cell data after updating the render state. */
-	CELLS     = 3,
-	MAX_VALUE = 2147483647,
+	CELLS   = 3,
 }
 
 /**
@@ -174,8 +163,7 @@ RenderStateRowData :: enum u32 {
 */
 RenderStateRowOption :: enum u32 {
 	/** Set dirty state for the current row (bool). */
-	DIRTY     = 0,
-	MAX_VALUE = 2147483647,
+	GHOSTTY_RENDER_STATE_ROW_OPTION_DIRTY = 0,
 }
 
 /**
@@ -256,7 +244,6 @@ RenderStateRowCellsData :: enum u32 {
 	*  color, in which case the caller should use whatever default foreground
 	*  color it wants (e.g. the terminal foreground). */
 	FG_COLOR      = 6,
-	MAX_VALUE     = 2147483647,
 }
 
 @(default_calling_convention="c", link_prefix="ghostty_")

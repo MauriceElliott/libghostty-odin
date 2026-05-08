@@ -25,31 +25,21 @@ remove_type_prefix = "Ghostty"
 // Strip the "ghostty_" prefix from all function names and use it as link_prefix
 remove_function_prefix = "ghostty_"
 
-// Platform-specific foreign import declarations written by hand.
-imports_file = "imports.odin"
+// Platform-specific foreign import declarations for every generated file.
+// The `_ :: lib` line suppresses "lib declared but not used" in type-only files
+// (same pattern bindgen uses internally for its import_lib option).
+imports_file = "link.odin"
 
 procedures_at_end = true
 
-// Opaque handle typedefs (pointer-to-incomplete-struct) map naturally to rawptr in Odin.
-// The generator may already do this, but be explicit for the most-used ones.
-type_overrides = {
-    "GhosttyTerminal"                          = "Terminal_Handle"
-    "GhosttyRenderState"                       = "Render_State_Handle"
-    "GhosttyRenderStateRowIterator"            = "Row_Iterator_Handle"
-    "GhosttyRenderStateRowCells"               = "Row_Cells_Handle"
-    "GhosttyKittyGraphics"                     = "Kitty_Graphics_Handle"
-    "GhosttyKittyGraphicsImage"                = "Kitty_Graphics_Image_Handle"
-    "GhosttyKittyGraphicsPlacementIterator"    = "Kitty_Graphics_Placement_Iterator_Handle"
-    "GhosttyFormatter"                         = "Formatter_Handle"
-    "GhosttyOscParser"                         = "Osc_Parser_Handle"
-    "GhosttyOscCommand"                        = "Osc_Command_Handle"
-    "GhosttySgrParser"                         = "Sgr_Parser_Handle"
-}
-
-// device.h and point.h use GHOSTTY_ENUM_MAX_VALUE without including types.h.
-// Provide it directly so standalone parsing of those files produces INT_MAX.
+// device.h and point.h don't include types.h, which defines GHOSTTY_ENUM_TYPED as
+// an empty macro. Without the define, clang interprets it as a literal enum tag name,
+// generating a duplicate type across files. Defining it empty makes clang see truly
+// anonymous enums, so only the typedef name (ColorScheme, PointTag, etc.) is emitted.
+// GHOSTTY_ENUM_MAX_VALUE is also in types.h and needed for the same reason.
 clang_defines = {
-    "GHOSTTY_ENUM_MAX_VALUE" = "2147483647"
+    "GHOSTTY_ENUM_MAX_VALUE" = "2147483647",
+    "GHOSTTY_ENUM_TYPED"     = ""
 }
 
 // Terminal_Options has 4 bytes of implicit C padding between `rows` (u16 at offset 2)
@@ -57,3 +47,8 @@ clang_defines = {
 struct_align = {
     "GhosttyTerminalOptions" = 8
 }
+
+// Strip INT_MAX sentinel members used to widen C enums to int — not meaningful in Odin.
+remove_enum_members = [
+    "*MAX_VALUE"
+]

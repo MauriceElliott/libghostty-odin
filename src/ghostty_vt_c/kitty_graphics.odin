@@ -9,14 +9,6 @@ package ghostty_vt_c
 
 import "core:c"
 
-// Platform-specific foreign import declarations for libghostty-vt.
-//
-// This file is included verbatim near the top of the generated binding file
-// by odin-c-bindgen (via the `imports_file` setting in bindgen.sjson).
-//
-// The library is vendored via scripts/build_libghostty.sh into build/ghostty-install/.
-// Use an explicit relative path rather than "system:ghostty-vt" so that the
-// vendored build is always used, regardless of what is installed system-wide.
 when ODIN_OS == .Linux {
     foreign import lib "../../build/ghostty-install/lib/libghostty-vt.so"
 } else when ODIN_OS == .Darwin {
@@ -24,6 +16,8 @@ when ODIN_OS == .Linux {
 } else when ODIN_OS == .Windows {
     foreign import lib "../../build/ghostty-install/lib/ghostty-vt.lib"
 }
+// Suppress "lib declared but not used" in generated files that only contain types.
+_ :: lib
 
 
 /**
@@ -43,7 +37,6 @@ KittyGraphicsData :: enum u32 {
 	* Output type: GhosttyKittyGraphicsPlacementIterator *
 	*/
 	PLACEMENT_ITERATOR = 1,
-	MAX_VALUE          = 2147483647,
 }
 
 /**
@@ -138,7 +131,6 @@ KittyGraphicsPlacementData :: enum u32 {
 	* Output type: int32_t *
 	*/
 	Z             = 12,
-	MAX_VALUE     = 2147483647,
 }
 
 /**
@@ -157,7 +149,6 @@ KittyPlacementLayer :: enum u32 {
 	BELOW_BG   = 1,
 	BELOW_TEXT = 2,
 	ABOVE_TEXT = 3,
-	MAX_VALUE  = 2147483647,
 }
 
 /**
@@ -171,8 +162,7 @@ KittyGraphicsPlacementIteratorOption :: enum u32 {
 	*
 	* Input type: GhosttyKittyPlacementLayer *
 	*/
-	LAYER     = 0,
-	MAX_VALUE = 2147483647,
+	GHOSTTY_KITTY_GRAPHICS_PLACEMENT_ITERATOR_OPTION_LAYER = 0,
 }
 
 /**
@@ -186,7 +176,6 @@ KittyImageFormat :: enum u32 {
 	PNG        = 2,
 	GRAY_ALPHA = 3,
 	GRAY       = 4,
-	MAX_VALUE  = 2147483647,
 }
 
 /**
@@ -197,7 +186,6 @@ KittyImageFormat :: enum u32 {
 KittyImageCompression :: enum u32 {
 	NONE         = 0,
 	ZLIB_DEFLATE = 1,
-	MAX_VALUE    = 2147483647,
 }
 
 /**
@@ -265,7 +253,6 @@ KittyGraphicsImageData :: enum u32 {
 	* Output type: size_t *
 	*/
 	DATA_LEN    = 8,
-	MAX_VALUE   = 2147483647,
 }
 
 /**
