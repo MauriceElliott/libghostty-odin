@@ -8,7 +8,8 @@ Terminal :: struct {
 	handle: vt_c.Terminal,
 }
 
-terminal_new :: proc(opts: vt_c.TerminalOptions) -> (Terminal, Error) {
+terminal_new :: proc(cols: f32, rows, f32, max_scroll: int) -> (Terminal, Error) {
+	opts: vt_c.TerminalOptions = { cols = cols, rows = rows, max_scrollback = max_scroll}
 	h: vt_c.Terminal
 	if r := vt_c.terminal_new(nil, &h, opts); r != .SUCCESS {
 		return {}, result_to_error(r)
