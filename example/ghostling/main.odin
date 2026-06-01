@@ -1,44 +1,53 @@
 package main
 
-import "core:fmt"
-import vt_c "../../src/ghostty_vt_c"
 import vt "../../src/ghostty_vt"
-import rl "vendor:raylib"
+import vt_c "../../src/ghostty_vt_c"
+import "core:fmt"
 import "core:math"
+import rl "vendor:raylib"
 
-grid_size :: proc(win_w: int, win_h: int, cell_w: int, cell_h: int) -> (f32, f32) {
-    return math.max(1, math.floor(win_w - 2 * PADDING) / cell_w),
-           math.max(1, math.floor(win_h - 2 * PADDING) / cell_h)
+grid_size :: proc(win_w: f32, win_h: f32, cell_w: f32, cell_h: f32) -> (f32, f32) {
+	max_width := math.max(1, math.floor(win_w - 2 * padding) / cell_w)
+	max_height := math.max(1, math.floor(win_h - 2 * padding) / cell_h)
+	return max_width, max_height
+
 }
 
-init :: proc() -> Terminal {
-    font_size :: 10
-    padding   :: 6.0
-    cell_gap  :: 0.0
-    row_gap   :: 12.0
+font_size :: 10
+padding :: 6.0
+cell_gap :: 0.0
+row_gap :: 12.0
 
-    font        := rl.loadfontex("./JetBrainsMono-Medium.ttf", font_size, nil, 0)
-    glyph       := rl.measuretextex(font, "m", font_size, 0)
-    cell_width  := glyph.x + cell_gap
-    cell_height := glyph.y + row_gap
+init :: proc() -> vt.Terminal {
 
-    cols, rows := grid_size(window.width(), window.height(), cell_width, cell_height)
+	font := rl.LoadFontEx("./JetBrainsMono-Medium.ttf", font_size, nil, 0)
+	glyph := rl.MeasureTextEx(font, "m", font_size, 0)
+	win_w := cast(f32)rl.GetScreenWidth()
+	win_h := cast(f32)rl.GetScreenHeight()
+	cell_width := glyph.x + cell_gap
+	cell_height := glyph.y + row_gap
 
-    terminal, err := vt.terminal_new(cols, rows, 1000)
+	cols, rows := grid_size(win_w, win_h, cell_width, cell_height)
 
-    if err != nil {
-        fmt.eprintln("Error retrieving new terminal:", err)
-    }
+	terminal, err := vt.terminal_new(cast(u16)cols, cast(u16)rows, 1000)
 
-    return terminal
+	if err != nil {
+		fmt.eprintln("Error retrieving new terminal:", err)
+	}
+
+	return terminal
 }
 
 main :: proc() {
-    term := init()
-    defer vt.terminal_destroy(&t)
+	rl.InitWindow(800, 600, "Ghostling")
+	defer rl.CloseWindow()
+	for !rl.WindowShouldClose() {
+		term := init()
+		defer vt.terminal_destroy(&term)
 
-    vt.terminal_vt_write(t, transmute([]u8)string("Hello\r\n"))
+		vt.terminal_vt_write(term, transmute([]u8)string("Hello\r\n"))
 
-    fmt.println("OK: terminal created, wrote VT bytes, destroyed")
+		fmt.println("OK: terminal created, wrote VT bytes, destroyed")
+	}
 }
 
