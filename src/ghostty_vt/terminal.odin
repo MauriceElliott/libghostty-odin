@@ -40,17 +40,17 @@ terminal_resize :: proc(
 	)
 }
 
-terminal_write :: proc(t: Terminal, data: []u8) {
+terminal_write :: proc(t: ^Terminal, data: []u8) {
 	if len(data) == 0 {return}
 	vt_c.terminal_vt_write(t.handle, raw_data(data), uint(len(data)))
 }
 
-terminal_set_kitty_image_protocol_storage_limit :: proc(t: Terminal, limit: u64) {
+terminal_set_kitty_image_protocol_storage_limit :: proc(t: ^Terminal, limit: u64) {
 	l := limit
 	vt_c.terminal_set(t.handle, .KITTY_IMAGE_STORAGE_LIMIT, rawptr(&l))
 }
 
-terminal_set_kitty_image_from_file_allowed :: proc(t: Terminal, allowed: bool) {
+terminal_set_kitty_image_from_file_allowed :: proc(t: ^Terminal, allowed: bool) {
 	a := allowed
 	vt_c.terminal_set(t.handle, .KITTY_IMAGE_MEDIUM_FILE, rawptr(&a))
 }

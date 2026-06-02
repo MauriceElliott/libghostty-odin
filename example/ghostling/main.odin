@@ -34,7 +34,7 @@ init :: proc() -> vt.Terminal {
 		fmt.eprintln("Error retrieving new terminal:", err)
 	}
 
-	terminal.set_kitty_image_storage_limit(64 * 1024 * 1024)
+	vt.terminal_set_kitty_image_protocol_storage_limit(&terminal, cast(u64)64 * 1024 * 1024)
 
 	return terminal
 }
@@ -46,7 +46,7 @@ main :: proc() {
 	defer rl.CloseWindow()
 	defer vt.terminal_destroy(&term)
 	for !rl.WindowShouldClose() {
-		vt.terminal_vt_write(term, transmute([]u8)string("Hello\r\n"))
+		vt.terminal_write(&term, transmute([]u8)string("Hello\r\n"))
 		fmt.println("OK: terminal created, wrote VT bytes, destroyed")
 	}
 }
