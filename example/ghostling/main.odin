@@ -34,19 +34,19 @@ init :: proc() -> vt.Terminal {
 		fmt.eprintln("Error retrieving new terminal:", err)
 	}
 
+	terminal.set_kitty_image_storage_limit(64 * 1024 * 1024)
+
 	return terminal
 }
 
 main :: proc() {
 	rl.InitWindow(800, 600, "Ghostling")
 
+	term := init()
 	defer rl.CloseWindow()
+	defer vt.terminal_destroy(&term)
 	for !rl.WindowShouldClose() {
-		term := init()
-		defer vt.terminal_destroy(&term)
-
 		vt.terminal_vt_write(term, transmute([]u8)string("Hello\r\n"))
-
 		fmt.println("OK: terminal created, wrote VT bytes, destroyed")
 	}
 }
