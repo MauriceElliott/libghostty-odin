@@ -19,8 +19,7 @@ cell_gap :: 0.0
 row_gap :: 12.0
 
 init :: proc() -> vt.Terminal {
-
-	font := rl.LoadFontEx("./JetBrainsMono-Medium.ttf", font_size, nil, 0)
+	font := rl.LoadFontEx("resources/fonts/jetbrains.ttf", font_size, nil, 0)
 	glyph := rl.MeasureTextEx(font, "m", font_size, 0)
 	win_w := cast(f32)rl.GetScreenWidth()
 	win_h := cast(f32)rl.GetScreenHeight()
@@ -40,6 +39,7 @@ init :: proc() -> vt.Terminal {
 
 main :: proc() {
 	rl.InitWindow(800, 600, "Ghostling")
+
 	defer rl.CloseWindow()
 	for !rl.WindowShouldClose() {
 		term := init()

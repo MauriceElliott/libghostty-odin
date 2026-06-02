@@ -10,7 +10,7 @@ case "${1:-}" in
     "")
         "$REPO_ROOT/scripts/build_libghostty.sh"
         "$REPO_ROOT/scripts/build_libghostty_odin.sh"
-        "$REPO_ROOT/build/odin/ghostling"
+        (cd "$REPO_ROOT/build/odin" && ./ghostling)
         ;;
     *)
         echo "Usage: $0 [gen]" >&2
