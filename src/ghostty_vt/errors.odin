@@ -13,9 +13,15 @@ Error :: enum {
 @(private)
 result_to_error :: proc(r: vt_c.Result) -> Error {
 	#partial switch r {
-	case .OUT_OF_MEMORY: return .Out_Of_Memory
-	case .INVALID_VALUE: return .Invalid_Value
-	case .OUT_OF_SPACE:  return .Out_Of_Space
+	case .OUT_OF_MEMORY:
+		return .Out_Of_Memory
+	case .INVALID_VALUE:
+		return .Invalid_Value
+	case .OUT_OF_SPACE:
+		return .Out_Of_Space
+	case .NO_VALUE:
+		return .None
 	}
 	return .None
 }
+

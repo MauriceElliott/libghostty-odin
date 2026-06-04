@@ -57,13 +57,24 @@ row_cells_next :: proc(rc: Row_Cells) -> bool {
 // cell_graphemes returns the UTF-32 codepoints for the current cell.
 // The returned slice is caller-owned and must be freed with delete().
 // Returns nil and false when the cell has no text.
-cell_graphemes :: proc(rc: Row_Cells, allocator := context.allocator) -> (codepoints: []u32, ok: bool) {
+cell_graphemes :: proc(
+	rc: Row_Cells,
+	allocator := context.allocator,
+) -> (
+	codepoints: []u32,
+	ok: bool,
+) {
 	n: u32
-	if r := vt_c.render_state_row_cells_get(rc.handle, .GRAPHEMES_LEN, &n); r != .SUCCESS || n == 0 {
+	if r := vt_c.render_state_row_cells_get(rc.handle, .GRAPHEMES_LEN, &n);
+	   r != .SUCCESS || n == 0 {
 		return nil, false
 	}
 	buf := make([]u32, n, allocator)
-	vt_c.render_state_row_cells_get(rc.handle, .GRAPHEMES_BUF, raw_data(buf))
+	if r := vt_c.render_state_row_cells_get(rc.handle, .GRAPHEMES_BUF, raw_data(buf));
+	   r != .SUCCESS {
+		delete(buf, allocator)
+		return nil, false
+	}
 	return buf, true
 }
 
@@ -80,3 +91,4 @@ cell_bg_color :: proc(rc: Row_Cells) -> (color: vt_c.ColorRgb, ok: bool) {
 	r := vt_c.render_state_row_cells_get(rc.handle, .BG_COLOR, &color)
 	return color, r == .SUCCESS
 }
+
