@@ -50,6 +50,10 @@ main :: proc() {
 	mem.arena_init(&main_arena, main_arena_alloc)
 	defer mem.arena_free_all(&main_arena)
 
+	old_allocator := context.allocator
+	context.allocator = mem.arena_allocator(&main_arena)
+	defer context.allocator = old_allocator
+
 	term, font := init()
 	defer rl.UnloadFont(font)
 
