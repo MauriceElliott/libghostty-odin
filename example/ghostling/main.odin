@@ -42,6 +42,7 @@ main :: proc() {
 	rl.InitWindow(800, 600, "Ghostling")
 
 	term := init()
+	vt.terminal_set_title(&term, "Ghostling")
 	defer rl.CloseWindow()
 	defer vt.terminal_destroy(&term)
 	for !rl.WindowShouldClose() {
