@@ -3,6 +3,7 @@ package main
 import vt "../../src/ghostty_vt"
 import "core:fmt"
 import "core:math"
+import "core:mem"
 import rl "vendor:raylib"
 
 grid_size :: proc(win_w: f32, win_h: f32, cell_w: f32, cell_h: f32) -> (f32, f32) {
@@ -17,8 +18,9 @@ padding :: 6.0
 cell_gap :: 0.0
 row_gap :: 12.0
 
-init :: proc() -> vt.Terminal {
+init :: proc() -> (vt.Terminal, rl.Font) {
 	font := rl.LoadFontEx("resources/fonts/jetbrains.ttf", font_size, nil, 0)
+
 	glyph := rl.MeasureTextEx(font, "m", font_size, 0)
 	win_w := cast(f32)rl.GetScreenWidth()
 	win_h := cast(f32)rl.GetScreenHeight()
@@ -35,16 +37,27 @@ init :: proc() -> vt.Terminal {
 
 	vt.terminal_set_kitty_image_protocol_storage_limit(&terminal, cast(u64)64 * 1024 * 1024)
 
-	return terminal
+	return terminal, font
 }
 
 main :: proc() {
 	rl.InitWindow(800, 600, "Ghostling")
 
-	term := init()
+	main_arena := mem.Arena{}
+	main_arena_alloc := make([]u8, 1024 * 1024)
+	defer delete(main_arena_alloc)
+
+	mem.arena_init(&main_arena, main_arena_alloc)
+	defer mem.arena_free_all(&main_arena)
+
+	term, font := init()
+	defer rl.UnloadFont(font)
+
 	vt.terminal_set_title(&term, "Ghostling")
+
 	defer rl.CloseWindow()
 	defer vt.terminal_destroy(&term)
+
 	for !rl.WindowShouldClose() {
 		vt.terminal_write(&term, transmute([]u8)string("Hello\n"))
 		vt.terminal_write(&term, transmute([]u8)string("World!\n"))
