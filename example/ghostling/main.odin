@@ -1,7 +1,6 @@
 package main
 
 import vt "../../src/ghostty_vt"
-import vt_c "../../src/ghostty_vt_c"
 import "core:fmt"
 import "core:math"
 import rl "vendor:raylib"
@@ -46,7 +45,8 @@ main :: proc() {
 	defer rl.CloseWindow()
 	defer vt.terminal_destroy(&term)
 	for !rl.WindowShouldClose() {
-		vt.terminal_write(&term, transmute([]u8)string("Hello\r\n"))
+		vt.terminal_write(&term, transmute([]u8)string("Hello\n"))
+		vt.terminal_write(&term, transmute([]u8)string("World!\n"))
 		fmt.println("OK: terminal created, wrote VT bytes, destroyed")
 	}
 }
