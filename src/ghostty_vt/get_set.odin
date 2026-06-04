@@ -33,9 +33,13 @@ terminal_get_title :: proc(t: ^Terminal) -> string {
 }
 
 terminal_set_title :: proc(t: ^Terminal, title: string) -> Error {
+	buf := make([]u8, len(title))
+	copy(buf, transmute([]u8)title)
+	defer delete(buf)
+
 	v := vt_c.String {
-		ptr = raw_data(title),
-		len = uint(len(title)),
+		ptr = raw_data(buf),
+		len = uint(len(buf)),
 	}
 	return result_to_error(vt_c.terminal_set(t.handle, .TITLE, &v))
 }
@@ -55,12 +59,14 @@ terminal_get_default_bg :: proc(t: ^Terminal) -> (color: vt_c.ColorRgb, ok: bool
 }
 
 terminal_set_kitty_image_protocol_storage_limit :: proc(t: ^Terminal, limit: u64) {
-	l := limit
+	l := new(u64)
+	l^ = limit
 	vt_c.terminal_set(t.handle, .KITTY_IMAGE_STORAGE_LIMIT, rawptr(&l))
 }
 
 terminal_set_kitty_image_from_file_allowed :: proc(t: ^Terminal, allowed: bool) {
-	a := allowed
+	a := new(bool)
+	a^ = allowed
 	vt_c.terminal_set(t.handle, .KITTY_IMAGE_MEDIUM_FILE, rawptr(&a))
 }
 
