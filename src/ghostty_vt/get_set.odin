@@ -27,11 +27,16 @@ terminal_get_cursor_pos :: proc(t: Terminal) -> (x, y: u16, err: Error) {
 terminal_get_title :: proc(t: Terminal) -> string {
 	v: vt_c.String
 	vt_c.terminal_get(t.handle, .TITLE, &v)
-	return string(([^]u8)(v.ptr)[:v.len])
+	buf := make([]u8, v.len)
+	copy(buf, ([^]u8)(v.ptr)[:v.len])
+	return string(buf)
 }
 
 terminal_set_title :: proc(t: Terminal, title: string) -> Error {
-	v := vt_c.String{ptr = raw_data(title), len = uint(len(title))}
+	v := vt_c.String {
+		ptr = raw_data(title),
+		len = uint(len(title)),
+	}
 	return result_to_error(vt_c.terminal_set(t.handle, .TITLE, &v))
 }
 
@@ -48,3 +53,4 @@ terminal_get_default_bg :: proc(t: Terminal) -> (color: vt_c.ColorRgb, ok: bool)
 	r := vt_c.terminal_get(t.handle, .COLOR_BACKGROUND, &color)
 	return color, r == .SUCCESS
 }
+
