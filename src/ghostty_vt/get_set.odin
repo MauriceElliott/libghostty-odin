@@ -22,8 +22,6 @@ terminal_get_cursor_pos :: proc(t: ^Terminal) -> (x, y: u16, err: Error) {
 	return
 }
 
-// terminal_get_title returns a copy of the terminal title.
-// The caller must free the returned string with delete().
 terminal_get_title :: proc(t: ^Terminal) -> string {
 	v: vt_c.String
 	vt_c.terminal_get(t.handle, .TITLE, &v)
@@ -33,26 +31,19 @@ terminal_get_title :: proc(t: ^Terminal) -> string {
 }
 
 terminal_set_title :: proc(t: ^Terminal, title: string) -> Error {
-	buf := make([]u8, len(title))
-	copy(buf, transmute([]u8)title)
-	defer delete(buf)
-
+	ti := title
 	v := vt_c.String {
-		ptr = raw_data(buf),
-		len = uint(len(buf)),
+		ptr = raw_data(ti),
+		len = uint(len(ti)),
 	}
 	return result_to_error(vt_c.terminal_set(t.handle, .TITLE, &v))
 }
 
-// terminal_get_default_fg returns the default foreground color.
-// ok is false when no default has been set.
 terminal_get_default_fg :: proc(t: ^Terminal) -> (color: vt_c.ColorRgb, ok: bool) {
 	r := vt_c.terminal_get(t.handle, .COLOR_FOREGROUND, &color)
 	return color, r == .SUCCESS
 }
 
-// terminal_get_default_bg returns the default background color.
-// ok is false when no default has been set.
 terminal_get_default_bg :: proc(t: ^Terminal) -> (color: vt_c.ColorRgb, ok: bool) {
 	r := vt_c.terminal_get(t.handle, .COLOR_BACKGROUND, &color)
 	return color, r == .SUCCESS
